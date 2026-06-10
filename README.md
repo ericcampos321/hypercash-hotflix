@@ -118,9 +118,6 @@ cd apps/web && bun run dev
 # Recriar tabelas após alterar o schema
 bun run db:push
 
-# Ver logs do banco
-docker compose logs postgres
-
 # Parar o banco
 docker compose down
 ```
@@ -150,17 +147,26 @@ DATABASE_URL=postgres://hypercash:hypercash@localhost:5432/hypercash
 
 ---
 
+## Uso de IA — Proibido
+
+**O uso de ferramentas de inteligência artificial é estritamente proibido neste desafio.** Isso inclui, mas não se limita a: GitHub Copilot, ChatGPT, Claude, Gemini, Cursor, ou qualquer ferramenta que leia o repositório inteiro e sugira ou aplique correções automaticamente.
+
+O objetivo é avaliar **sua** capacidade de raciocínio, diagnóstico e resolução de problemas. Submissões com evidência de uso de IA serão desconsideradas.
+
+---
+
 ## Entregável
 
-Abra um Pull Request neste repositório com todas as correções aplicadas.
+1. Clone este repositório
+2. Suba o código no **seu próprio GitHub** (público)
+3. Aplique as correções com commits individuais e descritivos — o histórico de commits deve refletir a progressão do seu raciocínio, mostrando cada bug sendo identificado e corrigido separadamente
+4. Envie o link do repositório para o **RH responsável pelo seu processo seletivo**
 
-No corpo do PR, descreva **para cada bug encontrado**:
+Crie um arquivo `SOLUCAO.md` na raiz, descreva **para cada bug encontrado**:
 
 - O sintoma observado
-- A causa raiz (qual linha / qual decisão de design causou o problema)
-- Como você corrigiu
-
-**Bônus:** adicione um teste automatizado para o endpoint `POST /api/withdraw` cobrindo a condição de race condition.
+- A causa raiz — qual linha, qual decisão de design e **por que** o bug ocorria
+- Como você corrigiu e por que essa é a solução correta
 
 ---
 
@@ -170,11 +176,11 @@ No corpo do PR, descreva **para cada bug encontrado**:
 |----------|------|
 | Identificação correta dos bugs | Alto |
 | Qualidade e corretude das correções | Alto |
-| Clareza na descrição das causas raiz | Médio |
+| Clareza na explicação das causas raiz | Alto |
+| Histórico de commits organizado e descritivo | Médio |
 | Não introduzir novos bugs ao corrigir os existentes | Alto |
-| Teste bônus | Bônus |
 
 ---
 
 > **Tempo estimado:** 2–4 horas  
-> Dúvidas sobre o setup? Abra uma issue no repositório.
+
