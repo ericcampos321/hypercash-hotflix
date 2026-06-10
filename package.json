@@ -1,0 +1,14 @@
+{
+  "name": "hypercash-teste",
+  "private": true,
+  "workspaces": ["packages/*", "apps/*"],
+  "scripts": {
+    "dev": "concurrently \"bun run --cwd apps/api dev\" \"bun run --cwd apps/web dev\"",
+    "db:push": "bun run --cwd packages/db db:push",
+    "db:generate": "bun run --cwd packages/db db:generate",
+    "db:seed": "bun run --cwd packages/db db:seed"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

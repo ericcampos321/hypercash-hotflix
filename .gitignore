@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+.bun/
+
+# Next.js
+apps/web/.next/
+apps/web/out/
+
+# API
+apps/api/dist/
+apps/api/build/
+apps/api/node_modules/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Build
+dist/
+build/
+
+# Drizzle
+packages/db/drizzle/
+
+# Misc
+.DS_Store
+*.log
+.claude/
