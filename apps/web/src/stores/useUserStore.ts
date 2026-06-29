@@ -30,10 +30,21 @@ export const useUserStore = create<UserState>()(
 
       login: async (email: string, password: string) => {
         set({ isLoading: true });
-        const res = await api.post<{ token: string; user: User }>("/api/auth/login", { email, password });
-        set({ token: res.token });
-        const balanceRes = await api.get<{ amount: number }>("/api/balance");
-        set({ user: res.user, balance: balanceRes.amount, isLoading: false });
+
+        try {
+          const response = await api.post<{ token: string; user: User }>("/api/auth/login", { email, password });
+
+          set({ token: response.token });
+
+          const balanceRes = await api.get<{ amount: number }>("/api/balance");
+
+          set({
+            user: response.user,
+            balance: balanceRes.amount,
+          });
+        } finally {
+          set({ isLoading: false });
+        }
       },
 
       logout: () => {
@@ -43,17 +54,20 @@ export const useUserStore = create<UserState>()(
       register: async (data: { name: string; email: string; password: string }) => {
         set({ isLoading: true });
 
-        const res = await api.post<{ token: string; user: User }>("/api/auth/register", data);
+        try {
+          const res = await api.post<{ token: string; user: User }>("/api/auth/register", data);
 
-        set({ token: res.token });
+          set({ token: res.token });
 
-        const balanceRes = await api.get<{ amount: number }>("/api/balance");
+          const balanceRes = await api.get<{ amount: number }>("/api/balance");
 
-        set({
-          user: res.user,
-          balance: balanceRes.amount,
-          isLoading: false,
-        });
+          set({
+            user: res.user,
+            balance: balanceRes.amount,
+          });
+        } finally {
+          set({ isLoading: false });
+        }
       },
 
       setBalance: (balance: number) => set({ balance }),
@@ -69,7 +83,6 @@ export const useUserStore = create<UserState>()(
         token: state.token,
         user: state.user,
         balance: state.balance,
-        isLoading: state.isLoading,
       }),
     }
   )
