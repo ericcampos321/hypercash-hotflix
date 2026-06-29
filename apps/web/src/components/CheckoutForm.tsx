@@ -11,7 +11,10 @@ export function CheckoutForm() {
   const { balance, setBalance } = useUserStore();
 
   const mutation = useMutation({
-    mutationFn: () => api.post<{ success: boolean; newBalance: number }>("/api/checkout", {}),
+    mutationFn: () =>
+      api.post<{ success: boolean; newBalance: number }>("/api/checkout", {
+        idempotency_key: crypto.randomUUID(),
+      }),
 
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ["balance"] });
