@@ -165,7 +165,7 @@ app.post("/api/checkout", authMiddleware, async (c) => {
   }
 
   if (Number(balance.amount) < CHECKOUT_AMOUNT) {
-    return c.json({ error: "Saldo insuficiente" }, 401);
+    return c.json({ error: "Saldo insuficiente" }, 400);
   }
 
   try {
