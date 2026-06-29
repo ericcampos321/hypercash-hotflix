@@ -1,46 +1,49 @@
-'use client'
+"use client";
 
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useUserStore } from '../stores/useUserStore'
-import { api } from '../lib/api'
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useUserStore } from "../stores/useUserStore";
+import { api } from "../lib/api";
 
-const CHECKOUT_AMOUNT = 50
+const CHECKOUT_AMOUNT = 50;
 
 export function CheckoutForm() {
-  const queryClient = useQueryClient()
-  const { balance, setBalance } = useUserStore()
+  const queryClient = useQueryClient();
+  const { balance, setBalance } = useUserStore();
 
   const mutation = useMutation({
-    mutationFn: () =>
-      api.post<{ success: boolean; newBalance: number }>('/api/checkout', {}),
+    mutationFn: () => api.post<{ success: boolean; newBalance: number }>("/api/checkout", {}),
 
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: ['balance'] })
+      await queryClient.cancelQueries({ queryKey: ["balance"] });
 
-      const previousBalance = queryClient.getQueryData<{ amount: number }>(['balance'])
+      const previousBalance = queryClient.getQueryData<{ amount: number }>(["balance"]);
+      const previousStoreBalance = useUserStore.getState().balance;
 
-      queryClient.setQueryData(['balance'], {
-        amount: (previousBalance?.amount ?? 0) - CHECKOUT_AMOUNT,
-      })
+      queryClient.setQueryData(["balance"], {
+        amount: (previousBalance?.amount ?? previousStoreBalance ?? 0) - CHECKOUT_AMOUNT,
+      });
 
-      const currentBalance = useUserStore.getState().balance ?? 0
-      setBalance(currentBalance - CHECKOUT_AMOUNT)
+      setBalance((previousStoreBalance ?? 0) - CHECKOUT_AMOUNT);
 
-      return { previousBalance }
+      return { previousBalance, previousStoreBalance };
     },
 
     onError: (_err, _vars, context) => {
-      queryClient.setQueryData(['balance'], context?.previousBalance)
+      queryClient.setQueryData(["balance"], context?.previousBalance);
+
+      if (typeof context?.previousStoreBalance === "number") {
+        setBalance(context.previousStoreBalance);
+      }
     },
 
     onSuccess: (data) => {
-      queryClient.setQueryData(['balance'], { amount: data.newBalance })
-      useUserStore.getState().setBalance(data.newBalance)
-      queryClient.invalidateQueries({ queryKey: ['transactions'] })
+      queryClient.setQueryData(["balance"], { amount: data.newBalance });
+      useUserStore.getState().setBalance(data.newBalance);
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
     },
-  })
+  });
 
-  const canCheckout = (balance ?? 0) >= CHECKOUT_AMOUNT
+  const canCheckout = (balance ?? 0) >= CHECKOUT_AMOUNT;
 
   return (
     <div className="bg-white rounded-xl shadow p-6 max-w-sm mx-auto">
@@ -58,8 +61,8 @@ export function CheckoutForm() {
       </div>
 
       <div className="mb-4 text-sm text-gray-600">
-        Saldo atual:{' '}
-        <span className={`font-semibold ${(balance ?? 0) < CHECKOUT_AMOUNT ? 'text-red-600' : 'text-gray-800'}`}>
+        Saldo atual:{" "}
+        <span className={`font-semibold ${(balance ?? 0) < CHECKOUT_AMOUNT ? "text-red-600" : "text-gray-800"}`}>
           R$ {(balance ?? 0).toFixed(2)}
         </span>
       </div>
@@ -81,12 +84,8 @@ export function CheckoutForm() {
         disabled={mutation.isPending || !canCheckout}
         className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-lg text-sm disabled:opacity-60 disabled:cursor-not-allowed"
       >
-        {mutation.isPending
-          ? 'Processando...'
-          : canCheckout
-          ? 'Pagar R$ 50,00'
-          : 'Saldo insuficiente'}
+        {mutation.isPending ? "Processando..." : canCheckout ? "Pagar R$ 50,00" : "Saldo insuficiente"}
       </button>
     </div>
-  )
+  );
 }
